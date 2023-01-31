@@ -1,4 +1,3 @@
 # CRC_Spectrum
-Pendiente
 
-David Quintero Camellando aqui
+Brach de prueba de rpo Col
