@@ -1,8 +1,8 @@
-Artificial intelligence in modern radio systems using devices with reduced computational capacity 
+# Artificial intelligence in modern radio systems using devices with reduced computational capacity 
 
  
 
-Research questions 
+## Research questions 
 
 What are the most widely used AI techniques and areas in intelligent radio systems, and what are their applications?   
 
@@ -16,7 +16,7 @@ What are the main challenges in integrating AI in the radio?
 
  
 
-Search string 
+## Search string 
 
 Used Artificial Intelligent techniques & intelligent radio systems. 
 
@@ -28,12 +28,12 @@ Implementations of Low computational cost algorithms for radio devices & GPU & F
 
 Main challenges in integrating Artificial Intelligence in the radio & Low computational cost algorithms for radio devices. 
 
-Search strategy 
+## Search strategy 
 
  
 
  
 
-Selection criteria 
+## Selection criteria 
 
  
