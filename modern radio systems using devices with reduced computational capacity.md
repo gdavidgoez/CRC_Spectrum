@@ -1,7 +1,7 @@
 # Artificial intelligence in modern radio systems using devices with reduced computational capacity 
 
  
-
+-----------------------------
 ## Research questions 
 
 What are the most widely used AI techniques and areas in intelligent radio systems, and what are their applications?   
