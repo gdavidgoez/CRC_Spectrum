@@ -105,6 +105,8 @@ class FFT_sensado_v3GRC(gr.top_block, Qt.QWidget):
         self.top_grid_layout.addWidget(self._Frecuencia_tool_bar)
         self._Average_range = Range(0.001, 1, 0.001, 0.07, 200)
         self._Average_win = RangeWidget(self._Average_range, self.set_Average, 'Average', "counter_slider", float)
+        self.dicc={}
+        self.top_layout.addWidget(self._Average_win)
         self.top_grid_layout.addWidget(self._Average_win)
         def _variable_function_probe():
             ##########################################################################
@@ -168,6 +170,7 @@ class FFT_sensado_v3GRC(gr.top_block, Qt.QWidget):
                     FreqS=np.linspace(self.frec_val-(self.bw/2),self.frec_val+(self.bw/2),self.nfft)
                     self.dicc[str(self.frec_val)]=[FreqS[np.where(s==1)],sint[np.where(s==1)]]
                     print(len(FreqS[np.where(s==1)]))
+                    print(" --> ")
                     #print(self.dicc[str(self.frec_val)])
                     """
                     Aqui rutina para guardar los ficheros de medición
