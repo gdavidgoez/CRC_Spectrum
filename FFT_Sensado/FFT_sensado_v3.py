@@ -177,7 +177,7 @@ class FFT_sensado_v3GRC(gr.top_block, Qt.QWidget):
             self.qtgui_vector_sink_f_0.set_line_color(i, colors[i])
             self.qtgui_vector_sink_f_0.set_line_alpha(i, alphas[i])
 
-        self._qtgui_vector_sink_f_0_win = sip.wrapinstance(self.qtgui_vector_sink_f_0.pyqwidget(), Qt.QWidget)
+        self._qtgui_vector_sink_f_0_win = sip.wrapinstance(self.qtgui_vector_sink_f_0.qwidget(), Qt.QWidget)
         self.top_grid_layout.addWidget(self._qtgui_vector_sink_f_0_win)
         self.logpwrfft_x_0 = logpwrfft.logpwrfft_c(
             sample_rate=samp_rate,
