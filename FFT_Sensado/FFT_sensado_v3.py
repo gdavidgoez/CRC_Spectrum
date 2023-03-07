@@ -79,18 +79,23 @@ class FFT_sensado_v3GRC(gr.top_block, Qt.QWidget):
         ##################################################
         self.variable_function = variable_function = 0
         self.samp_rate = samp_rate = 56e6
-        self.nfft = nfft = 4096
-        self.Frecuencia = Frecuencia = 100e6
+        self.nfft = nfft = 2048#4096
+        self.Frecuencia = Frecuencia = 1500e6#100000000
         self.Average = Average = 0.07
-
         self.frec_val = self.Frecuencia
         self.tFrecuencia = self.Frecuencia
-        self.fscan = 3900000000
-        self.step = 56e6   # Aquí se establece el paso de muestreo para el escaneo dinámico
+        #self.fscan = 3900e6
+        self.fscan = 2000e6#900e6
+        #self.step = 100000000
+        self.step = 20e6 # Aquí se establece el paso de muestreo para el escaneo dinámico
+        self.Fstart = 1500e6
+        self.bw = 20e6
+        self.method=1#  
+        
         ##################################################
         # Blocks
         ##################################################
-        self.blocks_probe = blocks.probe_signal_vf(4096)
+        self.blocks_probe = blocks.probe_signal_vf(nfft)
         self._Frecuencia_tool_bar = Qt.QToolBar(self)
         self._Frecuencia_tool_bar.addWidget(Qt.QLabel('Frecuencia' + ": "))
         self._Frecuencia_line_edit = Qt.QLineEdit(str(self.Frecuencia))
@@ -103,13 +108,15 @@ class FFT_sensado_v3GRC(gr.top_block, Qt.QWidget):
         self.top_grid_layout.addWidget(self._Average_win)
         def _variable_function_probe():
             ##########################################################################
-            # Trabajar aquí
+            # Start - Trabajar aquí
             ###########################################################################
             while True:
 
                 val = self.blocks_probe.level()
                 sint = np.array(val)
                 if np.std(sint) != 0:
+                    ### Desde Aqui German
+                    """
                     Umbral = np.mean(sint) + (np.max(sint) - np.mean(sint)) / 2.0
                     s = np.where(sint > Umbral, 1, -1)
                     print(np.where(s == 1))
@@ -118,12 +125,62 @@ class FFT_sensado_v3GRC(gr.top_block, Qt.QWidget):
                     self.frec_val = self.frec_val + self.step
                     self.set_Frecuencia(self.frec_val)
                     print(self.frec_val)
+                    """
+                    ### Hasta Aqui German
+                    if self.method==1:
+                        """
+                        Calculo propuesto por German David
+                        """
+                        Umbral= np.mean(sint)+(np.max(sint)-np.mean(sint))/2
+                    elif self.method==2:
+                        """
+                        Aumento a partir de la media del 3db
+                        """
+                        Umbral= np.mean(sint)+3#3db
+                    elif self.method==3:
+                        """
+                        Disminuir a partir de la media del 9db
+                        """
+                        Umbral= np.max(sint)-9#3db
+                    elif self.method==4:
+                        """
+                        Variacion al metodo 1 usando el valor min y div por 3
+                        """
+                        Umbral= np.mean(sint)+((np.max(sint)-np.min(sint))/3)
+                    elif self.method==5:
+                        """
+                        Variacion al metodo 1 usando el valor min y div por 4
+                        """
+                        Umbral= np.mean(sint)+((np.max(sint)-np.min(sint))/4)
+                        
+                    self.qtgui_vector_sink_f_0.set_ref_level(Umbral)
+                    
+                    time.sleep(5)
+                    s=np.where(sint>Umbral,1,-1)
+                    #print(np.where(s==1))
+                    if self.frec_val > self.fscan:
+                        self.frec_val= self.Fstart
+                    self.frec_val = self.frec_val + self.step
+                    self.set_Frecuencia(self.frec_val)
+                    #print(self.frec_val)
+                    #self.qtgui_vector_sink_f_0.set_x_axis((self.frec_val-(self.bw/2))/1e6,(self.samp_rate/self.nfft)/1e6)
+                    self.qtgui_vector_sink_f_0.set_x_axis((self.frec_val-(self.bw/2))/1e6,(self.bw/self.nfft)/1e6)
+                    FreqS=np.linspace(self.frec_val-(self.bw/2),self.frec_val+(self.bw/2),self.nfft)
+                    self.dicc[str(self.frec_val)]=[FreqS[np.where(s==1)],sint[np.where(s==1)]]
+                    print(len(FreqS[np.where(s==1)]))
+                    #print(self.dicc[str(self.frec_val)])
+                    """
+                    Aqui rutina para guardar los ficheros de medición
+                    """
                 try:
                     self.set_variable_function(val)
                 except AttributeError:
                     pass
                 time.sleep(2)
                 #time.sleep(1.0 / (10))
+            ##########################################################################
+            # End -Trabajar aquí
+            ###########################################################################
         _variable_function_thread = threading.Thread(target=_variable_function_probe)
         _variable_function_thread.daemon = True
         _variable_function_thread.start()
@@ -136,23 +193,44 @@ class FFT_sensado_v3GRC(gr.top_block, Qt.QWidget):
                 channels=list(range(0,1)),
             ),
         )
-        self.uhd_usrp_source_0_0.set_center_freq(Frecuencia, 0)
+        #self.uhd_usrp_source_0_0.set_center_freq(Frecuencia, 0)
+        self.uhd_usrp_source_0_0.set_center_freq(self.frec_val, 0)
         self.uhd_usrp_source_0_0.set_gain(38, 0)
-        self.uhd_usrp_source_0_0.set_antenna('RX2', 0)
-        self.uhd_usrp_source_0_0.set_bandwidth(56000000, 0)
+        #self.uhd_usrp_source_0_0.set_antenna('RX2', 0)
+        self.uhd_usrp_source_0_0.set_antenna('TX/RX', 0)
+        #self.uhd_usrp_source_0_0.set_bandwidth(56000000, 0)
+        self.uhd_usrp_source_0_0.set_bandwidth(self.bw, 0)
         self.uhd_usrp_source_0_0.set_samp_rate(samp_rate)
         self.uhd_usrp_source_0_0.set_time_unknown_pps(uhd.time_spec())
         self.qtgui_vector_sink_f_0 = qtgui.vector_sink_f(
             nfft,
             0,
             1.0,
-            "x-Axis",
+            #"x-Axis",
+            "Freq (Mhz)",
             "y-Axis",
             "",
-            1 # Number of inputs
+            1, # Number of inputs
+            None # parent
         )
         self.qtgui_vector_sink_f_0.set_update_time(0.10)
-        self.qtgui_vector_sink_f_0.set_y_axis(-140, 10)
+        self.qtgui_vector_sink_f_0.set_y_axis((-140), 10)
+        ### Equ Col
+        """
+        df=Fs/N
+        sampleIndex=np.linspace(-N/2,(N/2)-1,N)
+        f=sampleIndex*df
+        """
+        # df=self.samp_rate/self.nfft
+        # sampleIndex=np.linspace(-self.nfft/2,(self.nfft/2)-1,self.nfft)
+        # print(len(sampleIndex))
+        # f=sampleIndex*df
+        #self.qtgui_vector_sink_f_0.set_x_axis((-2),6)
+        #self.qtgui_vector_sink_f_0.set_x_axis(-self.samp_rate/2,self.samp_rate/self.nfft)
+        #self.qtgui_vector_sink_f_0.set_x_axis(self.frec_val-(self.bw/2),self.samp_rate/self.nfft)
+        self.qtgui_vector_sink_f_0.set_x_axis((self.frec_val-(self.bw/2))/1e6,(self.samp_rate/self.nfft)/1e6)
+
+        ####
         self.qtgui_vector_sink_f_0.enable_autoscale(False)
         self.qtgui_vector_sink_f_0.enable_grid(False)
         self.qtgui_vector_sink_f_0.set_x_axis_units("")
@@ -185,7 +263,8 @@ class FFT_sensado_v3GRC(gr.top_block, Qt.QWidget):
             ref_scale=2,
             frame_rate=30,
             avg_alpha=Average,
-            average=True)
+            average=True,
+            shift=True)
 
 
 
