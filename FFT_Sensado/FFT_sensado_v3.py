@@ -80,17 +80,18 @@ class FFT_sensado_v3GRC(gr.top_block, Qt.QWidget):
         self.variable_function = variable_function = 0
         self.samp_rate = samp_rate = 56e6
         self.nfft = nfft = 2048#4096
-        self.Frecuencia = Frecuencia = 1500e6#100000000
+        self.Frecuencia = Frecuencia = 2000e6#100000000
         self.Average = Average = 0.07
         self.frec_val = self.Frecuencia
         self.tFrecuencia = self.Frecuencia
         #self.fscan = 3900e6
-        self.fscan = 2000e6#900e6
+        self.fscan = 3000e6#900e6
         #self.step = 100000000
-        self.step = 20e6 # Aquí se establece el paso de muestreo para el escaneo dinámico
+        self.step = 10e6 # Aquí se establece el paso de muestreo para el escaneo dinámico
         self.Fstart = 1500e6
-        self.bw = 20e6
-        self.method=1#  
+        #self.bw = 20e6
+        self.bw = 40e6
+        self.method=4#  
         
         ##################################################
         # Blocks
