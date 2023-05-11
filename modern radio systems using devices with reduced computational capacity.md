@@ -36,10 +36,16 @@ Main challenges in integrating Artificial Intelligence in the radio & Low comput
 
 ---------------------------------------------------------------------------------------
 ## Search strategy 
-...............
+1. Relation to the search topic
+2. Be published within the window of interest  2018 - 2023
+3. Peer-reviewed scientific journals and conference
+4. Contributes to the answer to at least one of the research questions.​
 
  
 ---------------------------------------------------------------------------------------
 ## Selection criteria 
 ---------------------------------------------------------------------------------------
-.....................
+1. Not related to 5G communications
+2. Published before 2018
+3. Not English  or Spanish
+4. Published in a non-indexed journal
